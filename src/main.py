@@ -49,7 +49,7 @@ app.add_middleware(
 )
 
 # Quiz Discovery Endpoints (proxy to quiz-generator)
-@app.get("/api/quiz/available/{book_id}", response_model=QuizListResponse)
+@app.get("/quiz/available/{book_id}", response_model=QuizListResponse)
 async def get_available_quizzes(
     book_id: str = Path(..., description="Book ID to filter quizzes"),
     limit: int = Query(10, ge=1, le=100, description="Number of quizzes to return"),
@@ -63,7 +63,7 @@ async def get_available_quizzes(
         logger.error(f"Error fetching quizzes for book {book_id}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/quiz/{quiz_id}", response_model=Quiz)
+@app.get("/quiz/{quiz_id}", response_model=Quiz)
 async def get_quiz_details(quiz_id: str = Path(..., description="Quiz ID")):
     try:
         logger.info(f"Fetching quiz details for quiz_id: {quiz_id}")
@@ -78,7 +78,7 @@ async def get_quiz_details(quiz_id: str = Path(..., description="Quiz ID")):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Session Management Endpoints
-@app.post("/api/session/start", response_model=StartSessionResponse)
+@app.post("/session/start", response_model=StartSessionResponse)
 async def start_quiz_session(request: StartSessionRequest):
     try:
         logger.info(f"Starting new session for user {request.user_id}, quiz {request.quiz_id}")
@@ -93,7 +93,7 @@ async def start_quiz_session(request: StartSessionRequest):
         logger.error(f"Error starting session: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/session/{session_id}", response_model=SessionStatusResponse)
+@app.get("/session/{session_id}", response_model=SessionStatusResponse)
 async def get_session_status(session_id: str = Path(..., description="Session ID")):
     try:
         logger.info(f"Getting status for session {session_id}")
@@ -108,7 +108,7 @@ async def get_session_status(session_id: str = Path(..., description="Session ID
         logger.error(f"Error getting session status: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/session/{session_id}/answer", response_model=SubmitAnswerResponse)
+@app.post("/session/{session_id}/answer", response_model=SubmitAnswerResponse)
 async def submit_answer(
     request: SubmitAnswerRequest,
     session_id: str = Path(..., description="Session ID")
@@ -126,7 +126,7 @@ async def submit_answer(
         logger.error(f"Error submitting answer: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/session/{session_id}/complete", response_model=CompleteSessionResponse)
+@app.post("/session/{session_id}/complete", response_model=CompleteSessionResponse)
 async def complete_session(session_id: str = Path(..., description="Session ID")):
     try:
         logger.info(f"Completing session {session_id}")

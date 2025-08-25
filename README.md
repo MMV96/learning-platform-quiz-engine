@@ -54,16 +54,16 @@ docker run -p 80:80 --env-file .env quiz-engine
 
 ### Quiz Discovery (Proxy to quiz-generator)
 ```http
-GET /api/quiz/available/{book_id}?limit=10&offset=0
-GET /api/quiz/{quiz_id}
+GET /quiz/available/{book_id}?limit=10&offset=0
+GET /quiz/{quiz_id}
 ```
 
 ### Session Management
 ```http
-POST /api/session/start
-GET /api/session/{session_id}
-POST /api/session/{session_id}/answer
-POST /api/session/{session_id}/complete
+POST /session/start
+GET /session/{session_id}
+POST /session/{session_id}/answer
+POST /session/{session_id}/complete
 ```
 
 ### Health Check
@@ -75,7 +75,7 @@ GET /health
 
 ### 1. Start a Quiz Session
 ```bash
-curl -X POST "http://localhost/api/session/start" \
+curl -X POST "http://localhost/session/start" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "user123",
@@ -96,7 +96,7 @@ Response:
 
 ### 2. Submit an Answer
 ```bash
-curl -X POST "http://localhost/api/session/{session_id}/answer" \
+curl -X POST "http://localhost/session/{session_id}/answer" \
   -H "Content-Type: application/json" \
   -d '{
     "question_index": 0,
@@ -118,12 +118,12 @@ Response:
 
 ### 3. Get Session Status
 ```bash
-curl "http://localhost/api/session/{session_id}"
+curl "http://localhost/session/{session_id}"
 ```
 
 ### 4. Complete Session
 ```bash
-curl -X POST "http://localhost/api/session/{session_id}/complete"
+curl -X POST "http://localhost/session/{session_id}/complete"
 ```
 
 ## 📋 Data Models

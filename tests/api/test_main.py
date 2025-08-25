@@ -73,7 +73,7 @@ class TestQuizEngineAPI:
             )
             mock_quiz_client.list_quizzes = AsyncMock(return_value=quiz_list)
             
-            response = client.get("/api/quiz/available/test-book-123")
+            response = client.get("/quiz/available/test-book-123")
             
             assert response.status_code == 200
             data = response.json()
@@ -85,7 +85,7 @@ class TestQuizEngineAPI:
         with patch('src.main.quiz_client') as mock_quiz_client:
             mock_quiz_client.list_quizzes = AsyncMock(side_effect=Exception("Service unavailable"))
             
-            response = client.get("/api/quiz/available/test-book-123")
+            response = client.get("/quiz/available/test-book-123")
             
             assert response.status_code == 500
             data = response.json()
@@ -98,7 +98,7 @@ class TestQuizEngineAPI:
             quiz = Quiz(**sample_quiz_data)
             mock_quiz_client.get_quiz = AsyncMock(return_value=quiz)
             
-            response = client.get("/api/quiz/507f1f77bcf86cd799439011")
+            response = client.get("/quiz/507f1f77bcf86cd799439011")
             
             assert response.status_code == 200
             data = response.json()
@@ -109,7 +109,7 @@ class TestQuizEngineAPI:
         with patch('src.main.quiz_client') as mock_quiz_client:
             mock_quiz_client.get_quiz = AsyncMock(return_value=None)
             
-            response = client.get("/api/quiz/nonexistent-id")
+            response = client.get("/quiz/nonexistent-id")
             
             assert response.status_code == 404
             data = response.json()
@@ -129,7 +129,7 @@ class TestQuizEngineAPI:
             )
             mock_session_service.start_session = AsyncMock(return_value=response_data)
             
-            response = client.post("/api/session/start", json=sample_start_session_request)
+            response = client.post("/session/start", json=sample_start_session_request)
             
             assert response.status_code == 200
             data = response.json()
@@ -143,7 +143,7 @@ class TestQuizEngineAPI:
             # Missing quiz_id
         }
         
-        response = client.post("/api/session/start", json=invalid_request)
+        response = client.post("/session/start", json=invalid_request)
         
         assert response.status_code == 422  # Validation error
 
@@ -155,7 +155,7 @@ class TestQuizEngineAPI:
                 side_effect=SessionServiceError("Quiz not found")
             )
             
-            response = client.post("/api/session/start", json=sample_start_session_request)
+            response = client.post("/session/start", json=sample_start_session_request)
             
             assert response.status_code == 404
             data = response.json()
@@ -179,7 +179,7 @@ class TestQuizEngineAPI:
             )
             mock_session_service.get_session_status = AsyncMock(return_value=response_data)
             
-            response = client.get("/api/session/507f1f77bcf86cd799439012")
+            response = client.get("/session/507f1f77bcf86cd799439012")
             
             assert response.status_code == 200
             data = response.json()
@@ -194,7 +194,7 @@ class TestQuizEngineAPI:
                 side_effect=SessionServiceError("Session not found")
             )
             
-            response = client.get("/api/session/nonexistent-id")
+            response = client.get("/session/nonexistent-id")
             
             assert response.status_code == 404
             data = response.json()
@@ -215,7 +215,7 @@ class TestQuizEngineAPI:
             mock_session_service.submit_answer = AsyncMock(return_value=response_data)
             
             response = client.post(
-                "/api/session/507f1f77bcf86cd799439012/answer", 
+                "/session/507f1f77bcf86cd799439012/answer", 
                 json=sample_submit_answer_request
             )
             
@@ -232,7 +232,7 @@ class TestQuizEngineAPI:
         }
         
         response = client.post(
-            "/api/session/507f1f77bcf86cd799439012/answer", 
+            "/session/507f1f77bcf86cd799439012/answer", 
             json=invalid_request
         )
         
@@ -253,7 +253,7 @@ class TestQuizEngineAPI:
             )
             mock_session_service.complete_session = AsyncMock(return_value=response_data)
             
-            response = client.post("/api/session/507f1f77bcf86cd799439012/complete")
+            response = client.post("/session/507f1f77bcf86cd799439012/complete")
             
             assert response.status_code == 200
             data = response.json()
@@ -269,7 +269,7 @@ class TestQuizEngineAPI:
                 side_effect=SessionServiceError("Session not found")
             )
             
-            response = client.post("/api/session/nonexistent-id/complete")
+            response = client.post("/session/nonexistent-id/complete")
             
             assert response.status_code == 404
             data = response.json()
@@ -277,7 +277,7 @@ class TestQuizEngineAPI:
 
     def test_cors_middleware(self, client):
         # Test that CORS headers are present
-        response = client.options("/api/session/start")
+        response = client.options("/session/start")
         
         # FastAPI TestClient might not fully simulate CORS, but we can test the endpoint exists
         assert response.status_code in [200, 405]  # 405 is fine for OPTIONS on POST endpoint
@@ -292,15 +292,15 @@ class TestQuizEngineAPI:
         # Test various query parameter validations
         
         # Valid parameters
-        response = client.get("/api/quiz/available/test-book?limit=1&offset=0")
+        response = client.get("/quiz/available/test-book?limit=1&offset=0")
         assert response.status_code in [200, 500]  # 500 if service fails, but validation passes
         
         # Invalid limit (above maximum)
-        response = client.get("/api/quiz/available/test-book?limit=200")
+        response = client.get("/quiz/available/test-book?limit=200")
         assert response.status_code == 422
         
         # Invalid offset (below minimum)
-        response = client.get("/api/quiz/available/test-book?offset=-1")
+        response = client.get("/quiz/available/test-book?offset=-1")
         assert response.status_code == 422
 
     def test_request_logging(self, client, sample_start_session_request):
@@ -319,7 +319,7 @@ class TestQuizEngineAPI:
             )
             mock_session_service.start_session = AsyncMock(return_value=response_data)
             
-            response = client.post("/api/session/start", json=sample_start_session_request)
+            response = client.post("/session/start", json=sample_start_session_request)
             
             assert response.status_code == 200
             # Verify that appropriate logging was called
