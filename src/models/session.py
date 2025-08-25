@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from bson import ObjectId
 
@@ -26,7 +26,7 @@ class QuizSession(BaseModel):
     completed_at: Optional[datetime] = Field(None, description="Session completion time")
     status: SessionStatus = Field(default=SessionStatus.IN_PROGRESS, description="Session status")
     
-    model_config = {"populate_by_name": True}
+    model_config = ConfigDict(populate_by_name=True)
 
 # Request/Response models for API endpoints
 class StartSessionRequest(BaseModel):
