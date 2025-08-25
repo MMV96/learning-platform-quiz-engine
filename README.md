@@ -8,14 +8,14 @@ The Quiz Engine serves as an intermediary between users and the quiz-generator s
 
 ### External Dependencies
 - **MongoDB**: Local storage for quiz sessions
-- **Quiz Generator Service**: HTTP API for quiz content (running on port 8002)
+- **Quiz Generator Service**: HTTP API for quiz content
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.11+
 - MongoDB running locally
-- Quiz Generator Service running on port 8002
+- Quiz Generator Service
 
 ### 1. Environment Setup
 ```bash
@@ -27,7 +27,7 @@ cp .env.example .env
 
 # Edit .env with your configuration
 # MONGODB_URL=mongodb://admin:password123@localhost:27017/learning_platform?authSource=admin
-# QUIZ_GENERATOR_URL=http://localhost:8002
+# QUIZ_GENERATOR_URL=http://quiz-generator
 ```
 
 ### 2. Local Development
@@ -38,7 +38,7 @@ pip install -r requirements.txt
 # Run the service
 python -m src.main
 # or
-uvicorn src.main:app --host 0.0.0.0 --port 8003 --reload
+uvicorn src.main:app --host 0.0.0.0 --port 80 --reload
 ```
 
 ### 3. Docker Deployment
@@ -47,7 +47,7 @@ uvicorn src.main:app --host 0.0.0.0 --port 8003 --reload
 docker build -t quiz-engine .
 
 # Run container
-docker run -p 8003:8003 --env-file .env quiz-engine
+docker run -p 80:80 --env-file .env quiz-engine
 ```
 
 ## 📊 API Endpoints
@@ -75,7 +75,7 @@ GET /health
 
 ### 1. Start a Quiz Session
 ```bash
-curl -X POST "http://localhost:8003/api/session/start" \
+curl -X POST "http://localhost/api/session/start" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "user123",
@@ -96,7 +96,7 @@ Response:
 
 ### 2. Submit an Answer
 ```bash
-curl -X POST "http://localhost:8003/api/session/{session_id}/answer" \
+curl -X POST "http://localhost/api/session/{session_id}/answer" \
   -H "Content-Type: application/json" \
   -d '{
     "question_index": 0,
@@ -118,12 +118,12 @@ Response:
 
 ### 3. Get Session Status
 ```bash
-curl "http://localhost:8003/api/session/{session_id}"
+curl "http://localhost/api/session/{session_id}"
 ```
 
 ### 4. Complete Session
 ```bash
-curl -X POST "http://localhost:8003/api/session/{session_id}/complete"
+curl -X POST "http://localhost/api/session/{session_id}/complete"
 ```
 
 ## 📋 Data Models
@@ -156,8 +156,8 @@ curl -X POST "http://localhost:8003/api/session/{session_id}/complete"
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `MONGODB_URL` | MongoDB connection string | `mongodb://admin:password123@localhost:27017/learning_platform?authSource=admin` |
-| `QUIZ_GENERATOR_URL` | Quiz Generator service URL | `http://localhost:8002` |
-| `SERVICE_PORT` | Service port | `8003` |
+| `QUIZ_GENERATOR_URL` | Quiz Generator service URL | `http://quiz-generator` |
+| `SERVICE_PORT` | Service port | `80` |
 | `SERVICE_HOST` | Service host | `0.0.0.0` |
 | `SERVICE_NAME` | Service name for logging | `quiz-engine` |
 | `LOG_LEVEL` | Logging level | `INFO` |
@@ -167,7 +167,7 @@ curl -X POST "http://localhost:8003/api/session/{session_id}/complete"
 The service provides a health endpoint to verify all dependencies:
 
 ```bash
-curl http://localhost:8003/health
+curl http://localhost/health
 ```
 
 Expected response when healthy:
@@ -232,6 +232,6 @@ This service integrates with:
 
 ---
 
-**Service Port**: 8003  
+**Service Port**: 80  
 **Health Check**: `GET /health`  
-**API Documentation**: Visit `http://localhost:8003/docs` when running
+**API Documentation**: Visit `http://localhost/docs` when running

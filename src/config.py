@@ -8,10 +8,10 @@ class Settings(BaseSettings):
     mongodb_url: str = "mongodb://admin:password123@localhost:27017/learning_platform?authSource=admin"
     
     # External Services
-    quiz_generator_url: str = "http://quiz-generator:8002"
+    quiz_generator_url: str = "http://quiz-generator"
     
     # Service configuration
-    service_port: int = 8003
+    service_port: int = 80
     service_host: str = "0.0.0.0"
     service_name: str = "quiz-engine"
     

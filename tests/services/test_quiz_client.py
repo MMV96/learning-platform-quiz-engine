@@ -11,7 +11,7 @@ class TestQuizClient:
     @pytest.fixture
     def quiz_client(self):
         with patch('src.services.quiz_client.settings') as mock_settings:
-            mock_settings.quiz_generator_url = "http://quiz-generator:8002"
+            mock_settings.quiz_generator_url = "http://quiz-generator"
             return QuizClient()
 
     @pytest.fixture
@@ -73,7 +73,7 @@ class TestQuizClient:
             assert result.questions_count == 1
             
             mock_client.get.assert_called_once_with(
-                "http://quiz-generator:8002/quizzes/507f1f77bcf86cd799439011"
+                "http://quiz-generator/quizzes/507f1f77bcf86cd799439011"
             )
 
     @pytest.mark.asyncio
@@ -167,7 +167,7 @@ class TestQuizClient:
             assert result.quizzes[0].id == "507f1f77bcf86cd799439011"
             
             mock_client.get.assert_called_once_with(
-                "http://quiz-generator:8002/quizzes",
+                "http://quiz-generator/quizzes",
                 params={
                     'limit': 5,
                     'offset': 10,
@@ -192,7 +192,7 @@ class TestQuizClient:
             assert isinstance(result, QuizListResponse)
             
             mock_client.get.assert_called_once_with(
-                "http://quiz-generator:8002/quizzes",
+                "http://quiz-generator/quizzes",
                 params={
                     'limit': 20,
                     'offset': 5
@@ -249,7 +249,7 @@ class TestQuizClient:
             result = await quiz_client.health_check()
             
             assert result is True
-            mock_client.get.assert_called_once_with("http://quiz-generator:8002/health")
+            mock_client.get.assert_called_once_with("http://quiz-generator/health")
 
     @pytest.mark.asyncio
     async def test_health_check_failure(self, quiz_client):
